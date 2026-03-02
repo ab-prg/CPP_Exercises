@@ -1,11 +1,33 @@
 #!/bin/bash
 # pull_upstream.sh
-# Récupère les corrections du prof pour TP 2025 et merge dans ta branche locale
+# Met à jour ta branche étudiant 2025-master depuis le repo du prof
 
-echo "Fetching updates from upstream..."
+BRANCH_STUDENT="2025-master"
+BRANCH_UPSTREAM="2025/master"
+
+echo "=== Checking current branch ==="
+CURRENT_BRANCH=$(git branch --show-current)
+
+if [ "$CURRENT_BRANCH" != "$BRANCH_STUDENT" ]; then
+    echo "You are on '$CURRENT_BRANCH'."
+    echo "Switching to $BRANCH_STUDENT..."
+    git checkout $BRANCH_STUDENT || exit 1
+fi
+
+echo "=== Fetching updates from upstream ==="
 git fetch upstream
 
-echo "Merging upstream/2025/master into current branch..."
-git merge upstream/2025/master
+echo "=== Merging upstream/$BRANCH_UPSTREAM into $BRANCH_STUDENT ==="
+git merge upstream/$BRANCH_UPSTREAM
 
-echo "Done. Your branch is now up-to-date with upstream/2025/master."
+if [ $? -ne 0 ]; then
+    echo ""
+    echo "⚠️ Merge conflicts detected."
+    echo "Resolve them, then run:"
+    echo "  git add ."
+    echo "  git commit"
+    exit 1
+fi
+
+echo ""
+echo "✅ Your branch is now up-to-date with upstream/$BRANCH_UPSTREAM."

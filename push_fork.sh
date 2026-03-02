@@ -1,15 +1,30 @@
 #!/bin/bash
 # push_fork.sh
-# Push ton travail sur ton fork GitHub
+# Push ton travail sur ton fork GitHub (safe étudiant)
 
-echo "Adding all changes..."
+BRANCH_STUDENT="2025-master"
+
+# Vérifie la branche
+CURRENT_BRANCH=$(git branch --show-current)
+if [ "$CURRENT_BRANCH" != "$BRANCH_STUDENT" ]; then
+    echo "⚠️ You are on '$CURRENT_BRANCH'."
+    echo "Switching to $BRANCH_STUDENT..."
+    git checkout $BRANCH_STUDENT || exit 1
+fi
+
+# Ajouter les fichiers modifiés
 git add .
 
-echo "Committing..."
-read -p "Enter commit message: " msg
-git commit -m "$msg"
+# Vérifie si des changements à commit
+if git diff-index --quiet HEAD --; then
+    echo "✅ No changes to commit."
+else
+    # Commit avec message
+    read -p "Enter commit message: " msg
+    git commit -m "$msg"
+fi
 
-echo "Pushing to origin..."
-git push
+# Push sur le fork (origin)
+git push -u origin $BRANCH_STUDENT
 
-echo "Done. Your changes are on your fork!"
+echo "✅ Your changes have been pushed to your fork on branch $BRANCH_STUDENT!"
