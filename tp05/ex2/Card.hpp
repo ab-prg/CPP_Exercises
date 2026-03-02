@@ -15,11 +15,11 @@ public:
     // CONSTRUCTEURS DE COPIE ET DE DEPLACEMENT.
     // ==========================================
 
-    Card(unsigned, const std::string&);
+    Card(unsigned, std::string);
 
     void print() const;
-    bool operator==(Card) const;
-    bool operator<(Card) const;
+    bool operator==(const Card&) const;
+    bool operator<(const Card&) const;
 
-    friend std::ostream& operator<<(std::ostream&, Card);
+    friend std::ostream& operator<<(std::ostream&, const Card&);
 };

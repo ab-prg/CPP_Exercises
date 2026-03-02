@@ -6,10 +6,9 @@
 #include <string>
 #include <thread> // this_thread
 
-Player::Player(const std::string& nom)
-{
-    _name = nom;
-}
+Player::Player(const std::string& nom) :
+    _name { std::move(nom) }
+    {}
 
 void Player::deal_all_cards(Player& p1, Player& p2)
 {
@@ -25,19 +24,19 @@ void Player::deal_all_cards(Player& p1, Player& p2)
 
     for (int i = 0, s = all_cards.size(); i < s; i += 2)
     {
-        p1.push_front(all_cards[i]);
-        p2.push_front(all_cards[i + 1]);
+        p1.push_front(std::move(all_cards[i]));
+        p2.push_front(std::move(all_cards[i + 1]));
     }
 }
 
 void Player::push_front(Card card)
 {
-    _cards.insert(_cards.begin(), card);
+    _cards.insert(_cards.begin(), std::move(card));
 }
 
 Card Player::pop_back()
 {
-    Card res = _cards.back();
+    Card res = std::move(_cards.back());
     _cards.pop_back();
     return res;
 }
@@ -63,27 +62,27 @@ bool Player::play(Player& p1, Player& p2, std::vector<Card> stake)
     std::cout << "\t" << p1._name << " joue " << p1_card << " \t" << p2._name << " joue " << p2_card
               << std::endl;
 
-    stake.push_back(p1_card);
-    stake.push_back(p2_card);
+    stake.push_back(std::move(p1_card));
+    stake.push_back(std::move(p2_card));
     if (p1_card < p2_card)
     {
         std::shuffle(stake.begin(), stake.end(), std::default_random_engine(rd()));
-        for (Card c : stake)
-            p2.push_front(c);
+        for (Card& c : stake)
+            p2.push_front(std::move(c));
         std::cout << "\t" << p2._name << " remporte le pli (" << stake.size() << " cartes)" << std::endl;
     }
     else if (p2_card < p1_card)
     {
         std::shuffle(stake.begin(), stake.end(), std::default_random_engine(rd()));
-        for (Card c : stake)
-            p1.push_front(c);
+        for (Card& c : stake)
+            p1.push_front(std::move(c));
         std::cout << "\t" << p1._name << " remporte le pli (" << stake.size() << " cartes)" << std::endl;
     }
     else
     {
 
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
-        return play(p1, p2, stake);
+        return play(p1, p2, std::move(stake));
     }
     return true;
 }

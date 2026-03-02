@@ -9,34 +9,35 @@
 class Tracker
 {
 public:
+// Constructeur
     Tracker()
         : _id { ++_next_id }
     {
         ++_count;
     }
-
+// constructeur par copie
     Tracker(const Tracker& o)
         : _id { o._id }
     {
         ++_count;
         ++_copies;
     }
-
+// opérateur d'assignation par copie
     Tracker& operator=(const Tracker& other)
     {
         _id = other._id;
         ++_copies;
         return *this;
     }
-
+// constructeur par déplacement
     Tracker(Tracker&& o) noexcept
         : _id { o._id }
     {
         _count++;
     }
-
+// opérateur d'assignation par déplacement
     Tracker& operator=(Tracker&& other) noexcept = default;
-
+// destructeur
     ~Tracker() { --_count; }
 
     static int count() { return _count; }

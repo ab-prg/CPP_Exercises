@@ -4,11 +4,10 @@
 #include <string>   // string
 #include <vector>   // vector
 
-Card::Card(unsigned v, const std::string& c)
-{
-    _value = v;
-    _color = c;
-}
+Card::Card(unsigned v, std::string c) :
+    _value { v },
+    _color { std::move(c) }
+{}
 
 
 void Card::print() const
@@ -33,17 +32,17 @@ void Card::print() const
     std::cout << " de " << _color;
 }
 
-bool Card::operator==(Card other) const
+bool Card::operator==(const Card& other) const
 {
     return _value == other._value and _color == other._color;
 }
 
-bool Card::operator<(Card other) const
+bool Card::operator<(const Card& other) const
 {
     return _value < other._value;
 }
 
-std::ostream& operator<<(std::ostream& sortie, Card carte)
+std::ostream& operator<<(std::ostream& sortie,const Card& carte)
 {
     switch (carte._value)
     {
