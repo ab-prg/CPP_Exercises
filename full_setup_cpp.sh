@@ -37,11 +37,28 @@ fi
 
 # --- SSH key ---
 echo "=== Checking SSH key ==="
+
 if [ ! -f ~/.ssh/id_ed25519 ]; then
     echo "No SSH key found. Creating one..."
-    read -p "Enter your GitHub email for SSH key (optional, press enter to skip): " SSH_EMAIL
+    read -p "Enter your GitHub email for SSH key (optional): " SSH_EMAIL
     ssh-keygen -t ed25519 -C "$SSH_EMAIL"
 fi
+
+echo ""
+echo "========================================="
+echo "   YOUR PUBLIC SSH KEY"
+echo "========================================="
+cat ~/.ssh/id_ed25519.pub
+echo ""
+echo "IMPORTANT:"
+echo "Make sure this key is added to your GitHub account."
+echo ""
+echo "Go to:"
+echo "https://github.com/settings/keys"
+echo ""
+echo "Click 'New SSH key' and paste the key above."
+echo ""
+read -p "Press ENTER to continue and test connection..."
 
 echo "=== Starting SSH agent ==="
 eval "$(ssh-agent -s)" >/dev/null
@@ -49,6 +66,16 @@ ssh-add ~/.ssh/id_ed25519 2>/dev/null
 
 echo "=== Testing GitHub SSH connection ==="
 ssh -T git@github.com
+
+if [ $? -ne 0 ]; then
+    echo ""
+    echo "ERROR: SSH authentication failed."
+    echo "Your key is probably NOT added to GitHub."
+    echo "Add the key and re-run the script."
+    exit 1
+fi
+
+echo "SSH connection successful!"
 
 # --- Clone repo ---
 echo "=== Cloning your fork ==="
