@@ -4,6 +4,7 @@ CURRENT_BRANCH=$(git branch --show-current)
 if [ "$CURRENT_BRANCH" != "$BRANCH_STUDENT" ]; then
     git checkout $BRANCH_STUDENT || exit 1
 fi
+git status
 git add .
 if git diff-index --quiet HEAD --; then
     echo "No changes to commit."
